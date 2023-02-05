@@ -1,5 +1,4 @@
 from fastapi import FastAPI
-from pydantic import Ba
 
 
 app = FastAPI()
