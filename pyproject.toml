@@ -1,0 +1,56 @@
+[tool.poetry]
+name = "dairyapi"
+version = "0.1.0"
+description = "Dairy API for keeping user dairy logs"
+authors = ["Nkasi-e <nkasijnr@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pytest = "^7.2.1"
+sqlalchemy = "^2.0.1"
+psycopg2 = "^2.9.5"
+fastapi = {extras = ["all"], version = "^0.89.1"}
+alembic = "^1.9.2"
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+pydantic = "^1.10.4"
+
+
+[tool.poetry.group.dev.dependencies]
+flake8 = "^6.0.0"
+black = "^23.1.0"
+pre-commit = "^3.0.4"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[flake8]
+ignore = ["E203", "E266", "E501", "W503", "F403", "F401"]
+max-line-length = 79
+max-complexity = 18
+select = ["B", "C", "E", "F", "W", "T4", "B9"]
+
+[tool.black]
+line-length = 79
+target-version = ['py37']
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | venv
+  | dairyapi
+  | _build
+  | buck-out
+  | build
+  | dist
+  | migrations
+  | alembic
+)/
+'''
