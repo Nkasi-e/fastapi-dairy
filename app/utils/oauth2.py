@@ -13,6 +13,8 @@ from pydantic import BaseModel
 load_dotenv(".env")
 
 
+oauth2_schema = OAuth2PasswordBearer(tokenUrl="login")
+
 JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY")
 ALGORITHM = os.environ.get("ALGORITHM")
 ACCESS_TOKEN_EXPIRES_IN = float(os.environ.get("ACCESS_TOKEN_EXPIRES_IN"))
@@ -31,3 +33,29 @@ def create_access_token(data: dict):
 
     encoded_jwt = jwt.encode(to_encode, JWT_SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
+
+
+def verify_access_token(token: str, credentials_exception):
+    try:
+        payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=[ALGORITHM])
+
+        id: str = payload.get("user_id")
+        if id is None:
+            raise credentials_exception
+        token_data = TokenData(id=id)
+    except JWTError:
+        raise credentials_exception
+    return token_data
+
+
+def get_current_user(
+    token: str = Depends(oauth2_schema), db: Session = Depends(get_db)
+):
+    credentials_exception = HTTPException(
+        status_code=401,
+        detail=f"Unauthorized access. Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    token = verify_access_token(token, credentials_exception)
+    user = db.query(User).filter(User.id == token.id).first()
+    return user

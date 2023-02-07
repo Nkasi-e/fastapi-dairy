@@ -18,7 +18,7 @@ def get_user_by_email(db: Session, email: str):
 
 @router.post(
     "/account/signup",
-    response_description="User created successfully",
+    response_description="User created successfully.",
     status_code=201,
     response_model=UserOut,
 )
