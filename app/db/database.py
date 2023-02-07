@@ -14,7 +14,7 @@ DATABASE_PORT = os.environ.get("DATABASE_PORT")
 
 SQLALCHEMY_DATABASE_URL = f"postgresql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOSTNAME}:{DATABASE_PORT}/{DATABASE_NAME}"
 
-print(SQLALCHEMY_DATABASE_URL)
+
 engine = create_engine(SQLALCHEMY_DATABASE_URL, future=True)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
