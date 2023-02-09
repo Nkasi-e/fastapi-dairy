@@ -1,14 +1,15 @@
 import re
-from pydantic import BaseModel, EmailStr, validator, Field
+from pydantic import BaseModel, EmailStr, validator, constr
 from fastapi import HTTPException
 from datetime import datetime
 
 
 class UserBase(BaseModel):
-    firstname: str
-    lastname: str
+    firstname: constr(min_length=1, strip_whitespace=True)
+    lastname: constr(min_length=1, strip_whitespace=True)
     email: EmailStr
     password: str
+    cpassword: str
 
     @validator("password", pre=True)
     def check_password(cls, password):

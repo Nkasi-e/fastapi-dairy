@@ -26,6 +26,9 @@ def create_user(user: CreateUser, db: Session = Depends(get_db)):
     existing_user = get_user_by_email(db, user.email)
     if existing_user:
         raise HTTPException(status_code=409, detail=f"email already exists")
+    if user.cpassword != user.password:
+        raise HTTPException(status_code=404, detail=f"Password must match")
+    del user.cpassword
     user.password = hash_password(user.password)
     new_user = User(**user.dict())
     db.add(new_user)
