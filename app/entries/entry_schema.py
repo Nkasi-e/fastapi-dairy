@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel, EmailStr, constr
 from datetime import datetime
 
@@ -27,3 +28,8 @@ class EntryOut(EntryBase):
 
     class Config:
         orm_mode = True
+
+
+class UpdateEntry(BaseModel):
+    title: Optional[str]
+    content: Optional[str]
