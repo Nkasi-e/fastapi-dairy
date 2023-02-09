@@ -2,7 +2,7 @@ from typing import List, Optional
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
-from .entry_schema import CreateEntry, EntryOut
+from .entry_schema import CreateEntry, EntryOut, UpdateEntry
 from .entries_model import Entry
 from ..db.database import get_db
 from ..utils.oauth2 import get_current_user
@@ -54,7 +54,8 @@ def get_entry_by_id(
         )
     if entry.owner_id != current_user.id:
         raise HTTPException(
-            status_code=401, detail=f"Unauthorized to get entry with id {id}"
+            status_code=401,
+            detail=f"Unauthorized access to get entry with id {id}",
         )
     return entry
 
@@ -70,3 +71,52 @@ def create_entry(
     db.commit()
     db.refresh(new_entry)
     return new_entry
+
+
+@router.put("/entries/{id}", response_model=EntryOut)
+def update_entry(
+    id: int,
+    updated_entry: UpdateEntry,
+    db: Session = Depends(get_db),
+    current_user: int = Depends(get_current_user),
+):
+    entry_query = db.query(Entry).filter(Entry.id == id)
+    entry = entry_query.first()
+    if entry is None:
+        raise HTTPException(
+            status_code=404, detail=f"Entry with id {id} not found"
+        )
+    if entry.owner_id != current_user.id:
+        raise HTTPException(
+            status_code=401,
+            detail=f"Unauthorized access to update entry with id {id}",
+        )
+    update_data = updated_entry.dict(exclude_unset=True)
+    entry_query.filter(Entry.id == id).update(
+        update_data, synchronize_session=False
+    )
+    db.commit()
+    db.refresh(entry)
+    return entry
+
+
+@router.delete("/entries/{id}", status_code=204)
+def delete_entry(
+    id: int,
+    db: Session = Depends(get_db),
+    current_user: int = Depends(get_current_user),
+):
+    entry_query = db.query(Entry).filter(Entry.id == id)
+    entry = entry_query.first()
+    if entry is None:
+        raise HTTPException(
+            status_code=404, detail=f"Entry with id {id} not found"
+        )
+    if entry.owner_id != current_user.id:
+        raise HTTPException(
+            status_code=401,
+            detail=f"Unauthorized access to delete entry with id {id}",
+        )
+    entry_query.delete(synchronize_session=False)
+    db.commit()
+    return
