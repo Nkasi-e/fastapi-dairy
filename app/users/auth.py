@@ -1,6 +1,5 @@
 from datetime import timedelta
 from fastapi import APIRouter, HTTPException, Depends
-from httpx import get
 from sqlalchemy.orm import Session
 from ..db.database import get_db
 from .user_model import User
@@ -15,7 +14,6 @@ from ..utils.helpers import hash_password, verify_password
 from fastapi.security.oauth2 import OAuth2PasswordRequestForm
 from ..utils.oauth2 import (
     create_access_token,
-    get_current_user,
     JWT_SECRET_KEY,
     ALGORITHM,
 )

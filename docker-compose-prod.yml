@@ -1,0 +1,29 @@
+version: '3'
+services:
+  production:
+    image: nkasi/dairyapi
+    depends_on:
+      - postgres
+    ports:
+      - 80:3000
+    env_file:
+      - ./.env
+    environment:
+      - DATABASE_HOSTNAME=${DATABASE_HOSTNAME}
+      - DATABASE_PORT=${DATABASE_PORT}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - DATABASE_USERNAME=${DATABASE_USERNAME}
+      - SECRET_KEY=${JWT_SECRET_KEY}
+      - ALGORITHM=${ALGORITHM}
+      - JWT_ACCESS_TOKEN=${JWT_ACCESS_TOKEN_EXPIRES_IN}
+  postgres:
+    image: postgres
+    environment:
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRES_DATABASE=${DATABASE_NAME}
+    volumes:
+      - postgres-database:/var/lib/postgresql/data
+
+volumes:
+    postgres-database:
