@@ -29,7 +29,24 @@ template = f"""
 """
 
 
-async def send_email_async(subject: str, email_to: str, body: str):
+async def send_registration_mail(subject: str, email_to: str, body: str):
+    message = MessageSchema(
+        subject=subject,
+        recipients=[email_to],
+        body=body,
+        subtype="html",
+    )
+
+    fm = FastMail(config)
+    try:
+        await fm.send_message(message, template_name="email.html")
+        return True
+    except ConnectionErrors as error:
+        print(error)
+        return False
+
+
+async def send_password_reset_mail(subject: str, email_to: str, body: str):
     message = MessageSchema(
         subject=subject,
         recipients=[email_to],

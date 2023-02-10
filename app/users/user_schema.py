@@ -73,3 +73,19 @@ class Token(BaseModel):
 
 class PasswordReset(BaseModel):
     email: EmailStr
+
+
+class NewPasswordReset(BaseModel):
+    password: str
+    cpassword: str
+
+    @validator("password", pre=True)
+    def check_password(cls, password):
+        if not re.match(
+            r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)[A-Za-z\d]{8,}$", password
+        ):
+            raise HTTPException(
+                status_code=400,
+                detail="Password must have a minimum of 8 characters, 1 Uppercase, 1 lowercase and 1 number",
+            )
+        return password
