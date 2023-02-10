@@ -1,0 +1,34 @@
+version: '3'
+services:
+  development:
+    build: .
+    depends_on:
+      - postgres
+    ports:
+      - 3000:3000
+    volumes:
+      - ./:/usr/src/app:ro
+    command: uvicorn app.main:app --host 0.0.0.0 --port 3000 --reload
+    env_file:
+      - ./.env
+    environment:
+      - DATABASE_HOSTNAME=${DATABASE_HOSTNAME}
+      - DATABASE_PORT=${DATABASE_PORT}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - DATABASE_USERNAME=${DATABASE_USERNAME}
+      - SECRET_KEY=${JWT_SECRET_KEY}
+      - ALGORITHM=${ALGORITHM}
+      - JWT_ACCESS_TOKEN=${JWT_ACCESS_TOKEN_EXPIRES_IN}
+  postgres:
+    image: postgres
+    env_file:
+      - ./.env
+    environment:
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRES_DATABASE=${DATABASE_NAME}
+    volumes:
+      - postgres-database:/var/lib/postgresql/data
+
+volumes:
+    postgres-database:
