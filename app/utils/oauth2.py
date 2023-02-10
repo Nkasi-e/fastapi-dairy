@@ -24,10 +24,13 @@ class TokenData(BaseModel):
     id: Optional[str] = None
 
 
-def create_access_token(data: dict):
+def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
 
-    expires = datetime.utcnow() + timedelta(days=ACCESS_TOKEN_EXPIRES_IN)
+    if expires_delta:
+        expires = datetime.utcnow() + expires_delta
+    else:
+        expires = datetime.utcnow() + timedelta(days=ACCESS_TOKEN_EXPIRES_IN)
 
     to_encode.update({"exp": expires})
 

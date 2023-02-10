@@ -1,12 +1,26 @@
+from datetime import timedelta
 from fastapi import APIRouter, HTTPException, Depends
+from httpx import get
 from sqlalchemy.orm import Session
 from ..db.database import get_db
 from .user_model import User
-from .user_schema import CreateUser, UserOut, Token
+from .user_schema import (
+    CreateUser,
+    NewPasswordReset,
+    UserOut,
+    Token,
+    PasswordReset,
+)
 from ..utils.helpers import hash_password, verify_password
 from fastapi.security.oauth2 import OAuth2PasswordRequestForm
-from ..utils.oauth2 import create_access_token
-from ..utils.mail import send_email_async
+from ..utils.oauth2 import (
+    create_access_token,
+    get_current_user,
+    JWT_SECRET_KEY,
+    ALGORITHM,
+)
+from jose import JWTError, jwt
+from ..utils.mail import send_registration_mail, send_password_reset_mail
 
 router = APIRouter(tags=["Auth Section"])
 
@@ -31,7 +45,7 @@ async def create_user(user: CreateUser, db: Session = Depends(get_db)):
     del user.cpassword
     user.password = hash_password(user.password)
 
-    await send_email_async(
+    await send_registration_mail(
         subject="Registration Confirmation",
         email_to=user.email,
         body=f"Hello {user.firstname} {user.lastname}! Your account with email {user.email} has been successfully created",
@@ -44,7 +58,9 @@ async def create_user(user: CreateUser, db: Session = Depends(get_db)):
     return new_user
 
 
-@router.post("/login", response_model=Token)
+@router.post(
+    "/login", response_model=Token, response_description="Login Successful"
+)
 def login_user(
     user_credentials: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db),
@@ -67,3 +83,58 @@ def login_user(
         "access_token": access_token,
         "token_type": "Bearer",
     }
+
+
+@router.post("/reset_password", response_description="Reset Password")
+async def reset_password(
+    user_email: PasswordReset, db: Session = Depends(get_db)
+):
+    user = db.query(User).filter(User.email == user_email.email).first()
+
+    if user is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"email {user_email.email} is not a valid user email",
+        )
+    expires = timedelta(minutes=6)
+    token = create_access_token(
+        data={"user_id": user.id, "user_password": user.password},
+        expires_delta=expires,
+    )
+    reset_link = f"http://localhost:3000/reset%password?token={token}"
+    await send_password_reset_mail(
+        subject="Password Reset",
+        email_to=user_email.email,
+        body=f"Your password reset link is: {reset_link}",
+    )
+    return {
+        "message": "A password reset link has been sent to your email",
+        "reset_link": reset_link,
+    }
+
+
+@router.post("/reset_password/confirm")
+async def create_new_password(
+    token: str, new_password: NewPasswordReset, db: Session = Depends(get_db)
+):
+    try:
+        payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=[ALGORITHM])
+    except JWTError:
+        raise HTTPException(
+            status_code=400, detail=f"Token is invalid or has expired"
+        )
+    user_query = db.query(User).filter(User.id == payload["user_id"])
+    user = user_query.first()
+    if not user:
+        raise HTTPException(status_code=404, detail=f"User not found")
+    if new_password.cpassword != new_password.password:
+        raise HTTPException(status_code=400, detail=f"Password must match")
+    del new_password.cpassword
+    user.password = hash_password(new_password.password)
+    update_password = new_password.dict(exclude_unset=True)
+    user_query.filter(User.id == payload["user_id"]).update(
+        update_password, synchronize_session=False
+    )
+    db.commit()
+    db.refresh(user)
+    return {"Message": "Password has been updated successfully"}
