@@ -6,7 +6,7 @@ from .user_model import User
 from ..utils.oauth2 import get_current_user
 
 
-router = APIRouter()
+router = APIRouter(tags=["User Section"])
 
 
 @router.get("/users/profile", response_model=UserOut)

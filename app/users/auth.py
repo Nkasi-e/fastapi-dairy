@@ -6,9 +6,9 @@ from .user_schema import CreateUser, UserOut, Token
 from ..utils.helpers import hash_password, verify_password
 from fastapi.security.oauth2 import OAuth2PasswordRequestForm
 from ..utils.oauth2 import create_access_token
+from ..utils.mail import send_email_async
 
-
-router = APIRouter()
+router = APIRouter(tags=["Auth Section"])
 
 
 def get_user_by_email(db: Session, email: str):
@@ -22,7 +22,7 @@ def get_user_by_email(db: Session, email: str):
     status_code=201,
     response_model=UserOut,
 )
-def create_user(user: CreateUser, db: Session = Depends(get_db)):
+async def create_user(user: CreateUser, db: Session = Depends(get_db)):
     existing_user = get_user_by_email(db, user.email)
     if existing_user:
         raise HTTPException(status_code=409, detail=f"email already exists")
@@ -30,6 +30,13 @@ def create_user(user: CreateUser, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail=f"Password must match")
     del user.cpassword
     user.password = hash_password(user.password)
+
+    await send_email_async(
+        subject="Registration Confirmation",
+        email_to=user.email,
+        body=f"Hello {user.firstname} {user.lastname}! Your account with email {user.email} has been successfully created",
+    )
+
     new_user = User(**user.dict())
     db.add(new_user)
     db.commit()

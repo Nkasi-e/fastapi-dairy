@@ -8,7 +8,7 @@ from ..db.database import get_db
 from ..utils.oauth2 import get_current_user
 
 
-router = APIRouter()
+router = APIRouter(tags=["Entry Section"])
 
 
 @router.get("/entries", response_model=List[EntryOut])
