@@ -1,14 +1,15 @@
 from fastapi import FastAPI
+ test-branch
 from fastapi.middleware.cors import CORSMiddleware
 from .users import user_router, user_model, auth
+= master
 from .entries import entries_router, entries_model
 from .db.database import engine
 
 app = FastAPI()
 
 
-# user_model.Base.metadata.create_all(bind=engine)
-# entries_model.Base.metadata.create_all(bind=engine)
+
 
 
 origins = [
