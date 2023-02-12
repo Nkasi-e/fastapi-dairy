@@ -18,7 +18,7 @@ from ..utils.oauth2 import (
     ALGORITHM,
 )
 from jose import JWTError, jwt
-from ..utils.mail import send_registration_mail, send_password_reset_mail
+from ..utils.mail import send_mail
 
 router = APIRouter(tags=["Auth Section"])
 
@@ -43,7 +43,7 @@ async def create_user(user: CreateUser, db: Session = Depends(get_db)):
     del user.cpassword
     user.password = hash_password(user.password)
 
-    await send_registration_mail(
+    await send_mail(
         subject="Registration Confirmation",
         email_to=user.email,
         body=f"Hello {user.firstname} {user.lastname}! Your account with email {user.email} has been successfully created",
@@ -100,7 +100,7 @@ async def reset_password(
         expires_delta=expires,
     )
     reset_link = f"http://localhost:3000/reset%password?token={token}"
-    await send_password_reset_mail(
+    await send_mail(
         subject="Password Reset",
         email_to=user_email.email,
         body=f"Your password reset link is: {reset_link}",
@@ -109,6 +109,11 @@ async def reset_password(
         "message": "A password reset link has been sent to your email",
         "reset_link": reset_link,
     }
+
+
+@router.get("/reset%password?token={token}")
+def get_link(token: str):
+    return {"Password reset token": f"{token}"}
 
 
 @router.post("/reset_password/confirm")
@@ -132,6 +137,11 @@ async def create_new_password(
     update_password = new_password.dict(exclude_unset=True)
     user_query.filter(User.id == payload["user_id"]).update(
         update_password, synchronize_session=False
+    )
+    await send_mail(
+        subject="Password Reset Successful",
+        email_to=user.email,
+        body=f"You have successfully changed your password.",
     )
     db.commit()
     db.refresh(user)
