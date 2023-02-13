@@ -1,20 +1,14 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .users import user_router, user_model, auth
-from .entries import entries_router, entries_model
-from .db.database import engine
+from .users import user_router, auth
+from .entries import entries_router
 
 app = FastAPI()
-
-
-# user_model.Base.metadata.create_all(bind=engine)
-# entries_model.Base.metadata.create_all(bind=engine)
 
 
 origins = [
     "*",
 ]
-
 
 app.add_middleware(
     CORSMiddleware,
