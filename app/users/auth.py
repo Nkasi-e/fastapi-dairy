@@ -19,7 +19,7 @@ from ..utils.oauth2 import (
 )
 from jose import JWTError, jwt
 
-# from ..utils.mail import send_mail
+from ..utils.mail import send_mail
 
 router = APIRouter(tags=["Auth Section"])
 
