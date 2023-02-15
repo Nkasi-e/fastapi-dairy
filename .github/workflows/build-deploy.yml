@@ -74,8 +74,8 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{secrets.DOCKER_HUB_USERNAME}}/socialapi:latest
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=min
+          # cache-from: type=local,src=/tmp/.buildx-cache
+          # cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=min
 
         # name: Move cache
         # run: |
