@@ -18,7 +18,8 @@ from ..utils.oauth2 import (
     ALGORITHM,
 )
 from jose import JWTError, jwt
-from ..utils.mail import send_mail
+
+# from ..utils.mail import send_mail
 
 router = APIRouter(tags=["Auth Section"])
 
@@ -43,11 +44,11 @@ async def create_user(user: CreateUser, db: Session = Depends(get_db)):
     del user.cpassword
     user.password = hash_password(user.password)
 
-    await send_mail(
-        subject="Registration Confirmation",
-        email_to=user.email,
-        body=f"Hello {user.firstname} {user.lastname}! Your account with email {user.email} has been successfully created",
-    )
+    # await send_mail(
+    #     subject="Registration Confirmation",
+    #     email_to=user.email,
+    #     body=f"Hello {user.firstname} {user.lastname}! Your account with email {user.email} has been successfully created",
+    # )
 
     new_user = User(**user.dict())
     db.add(new_user)
