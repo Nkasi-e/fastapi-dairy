@@ -46,8 +46,7 @@ jobs:
 
       - name: Run tests
         run: pytest -v
-
-
+        
   deploy:
     runs-on: ubuntu-latest
     needs: [build]
@@ -57,8 +56,6 @@ jobs:
     steps:
       - name: Deploy to Docker
         run: echo "Deploying code to Docker"
-
-        
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
