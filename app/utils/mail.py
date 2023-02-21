@@ -4,11 +4,11 @@ from app.config import settings
 
 
 config = ConnectionConfig(
-    MAIL_USERNAME=settings.mail_username,
-    MAIL_PASSWORD=settings.mail_password,
-    MAIL_PORT=settings.mail_port,
-    MAIL_FROM=settings.mail_username,
-    MAIL_SERVER=settings.mail_server,
+    MAIL_USERNAME=settings.MAIL_USERNAME,
+    MAIL_PASSWORD=settings.MAIL_PASSWORD,
+    MAIL_PORT=settings.MAIL_PORT,
+    MAIL_FROM=settings.MAIL_USERNAME,
+    MAIL_SERVER=settings.MAIL_SERVER,
     MAIL_SSL_TLS=False,
     MAIL_STARTTLS=True,
     USE_CREDENTIALS=True,

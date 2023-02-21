@@ -2,20 +2,20 @@ from pydantic import BaseSettings
 
 
 class Settings(BaseSettings):
-    database_hostname: str
-    database_port: str
-    database_password: str
-    database_name: str
-    database_username: str
-    jwt_secret_key: str
-    algorithm: str
-    access_token_expires_in: int
+    DATABASE_HOSTNAME: str
+    DATABASE_PORT: str
+    DATABASE_PASSWORD: str
+    DATABASE_NAME: str
+    DATABASE_USERNAME: str
+    JWT_SECRET_KEY: str
+    ALGORITHM: str
+    ACCESS_TOKEN_EXPIRES_IN: int
 
     """ EMAIL VARIABLES """
-    mail_username: str
-    mail_password: str
-    mail_port: int
-    mail_server: str
+    MAIL_USERNAME: str
+    MAIL_PASSWORD: str
+    MAIL_PORT: int
+    MAIL_SERVER: str
 
     class Config:
         env_file = ".env"

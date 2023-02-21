@@ -1,4 +1,3 @@
-from typing import List
 from app.entries import entry_schema
 import pytest
 

@@ -115,7 +115,7 @@ async def create_new_password(
 ):
     try:
         payload = jwt.decode(
-            token, settings.jwt_secret_key, algorithms=[settings.algorithm]
+            token, settings.JWT_SECRET_KEY, algorithms=[settings.ALGORITHM]
         )
     except JWTError:
         raise HTTPException(

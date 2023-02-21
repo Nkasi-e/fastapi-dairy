@@ -12,9 +12,13 @@ jobs:
       DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
       DATABASE_NAME: ${{secrets.DATABASE_NAME}}
       DATABASE_USERNAME: ${{secrets.DATABASE_USERNAME}}
-      SECRET_KEY: ${{secrets.SECRET_KEY}}
+      SECRET_KEY: ${{secrets.JWT_SECRET_KEY}}
       ALGORITHM: ${{secrets.ALGORITHM}}
       ACCESS_TOKEN_EXPIRES_IN: ${{secrets.ACCESS_TOKEN_EXPIRES_IN}}
+      MAIL_USERNAME: ${{secrets.MAIL_USERNAME}}
+      MAIL_PASSWORD: ${{secrets.MAIL_PASSWORD}}
+      MAIL_SERVER: ${{secrets.MAIL_SERVER}}
+      MAIL_PORT: ${{secrets.MAIL_PORT}}
 
     services:
       postgres:

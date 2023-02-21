@@ -24,13 +24,13 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
         expires = datetime.utcnow() + expires_delta
     else:
         expires = datetime.utcnow() + timedelta(
-            days=settings.access_token_expires_in
+            days=settings.ACCESS_TOKEN_EXPIRES_IN
         )
 
     to_encode.update({"exp": expires})
 
     encoded_jwt = jwt.encode(
-        to_encode, settings.jwt_secret_key, algorithm=settings.algorithm
+        to_encode, settings.JWT_SECRET_KEY, algorithm=settings.ALGORITHM
     )
     return encoded_jwt
 
@@ -38,7 +38,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
 def verify_access_token(token: str, credentials_exception):
     try:
         payload = jwt.decode(
-            token, settings.jwt_secret_key, algorithms=[settings.algorithm]
+            token, settings.JWT_SECRET_KEY, algorithms=[settings.ALGORITHM]
         )
 
         id: str = payload.get("user_id")
