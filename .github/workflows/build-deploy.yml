@@ -12,7 +12,7 @@ jobs:
       DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
       DATABASE_NAME: ${{secrets.DATABASE_NAME}}
       DATABASE_USERNAME: ${{secrets.DATABASE_USERNAME}}
-      SECRET_KEY: ${{secrets.JWT_SECRET_KEY}}
+      JWT_SECRET_KEY: ${{secrets.JWT_SECRET_KEY}}
       ALGORITHM: ${{secrets.ALGORITHM}}
       ACCESS_TOKEN_EXPIRES_IN: ${{secrets.ACCESS_TOKEN_EXPIRES_IN}}
       MAIL_USERNAME: ${{secrets.MAIL_USERNAME}}
