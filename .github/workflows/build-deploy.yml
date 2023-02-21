@@ -73,14 +73,16 @@ jobs:
 
       - name: Build and Push to Docker
         id: docker_build
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          file: ./Dockerfile
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: ${{secrets.DOCKER_HUB_USERNAME}}/dairyapi:latest
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
-      - name: Image digest
-        run: echo ${{steps.docker_build.outputs.digest}}
+      - name: List files in current directory
+        run: ls -la
+      #   uses: docker/build-push-action@v4
+      #   with:
+      #     context: ./
+      #     file: dairyapi/Dockerfile
+      #     platforms: linux/amd64,linux/arm64
+      #     push: true
+      #     tags: ${{secrets.DOCKER_HUB_USERNAME}}/dairyapi:latest
+      #     cache-from: type=local,src=/tmp/.buildx-cache
+      #     cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+      # - name: Image digest
+      #   run: echo ${{steps.docker_build.outputs.digest}}
