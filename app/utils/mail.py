@@ -1,24 +1,18 @@
-import os
-from typing import List
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
-from pydantic import EmailStr, BaseModel
 from fastapi_mail.errors import ConnectionErrors
-from dotenv import load_dotenv
-
-load_dotenv(".env")
+from app.config import settings
 
 
 config = ConnectionConfig(
-    MAIL_USERNAME=os.environ.get("MAIL_USERNAME"),
-    MAIL_PASSWORD=os.environ.get("MAIL_PASSWORD"),
-    MAIL_PORT=os.environ.get("MAIL_PORT"),
-    MAIL_FROM=os.environ.get("MAIL_USERNAME"),
-    MAIL_SERVER=os.environ.get("MAIL_SERVER"),
+    MAIL_USERNAME=settings.mail_username,
+    MAIL_PASSWORD=settings.mail_password,
+    MAIL_PORT=settings.mail_port,
+    MAIL_FROM=settings.mail_username,
+    MAIL_SERVER=settings.mail_server,
     MAIL_SSL_TLS=False,
     MAIL_STARTTLS=True,
     USE_CREDENTIALS=True,
     VALIDATE_CERTS=True,
-    TIMEOUT=1,
 )
 
 template = f"""

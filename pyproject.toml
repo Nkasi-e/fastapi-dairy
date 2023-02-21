@@ -16,6 +16,8 @@ python-jose = {extras = ["cryptography"], version = "^3.3.0"}
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 pydantic = "^1.10.4"
 fastapi-mail = "^1.2.5"
+pytest-cov = "^4.0.0"
+coveralls = "^3.3.1"
 
 
 [tool.poetry.group.dev.dependencies]

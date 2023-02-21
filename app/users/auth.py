@@ -12,11 +12,8 @@ from .user_schema import (
 )
 from ..utils.helpers import hash_password, verify_password
 from fastapi.security.oauth2 import OAuth2PasswordRequestForm
-from ..utils.oauth2 import (
-    create_access_token,
-    JWT_SECRET_KEY,
-    ALGORITHM,
-)
+from ..utils.oauth2 import create_access_token
+from app.config import settings
 from jose import JWTError, jwt
 
 from ..utils.mail import send_mail
@@ -117,7 +114,9 @@ async def create_new_password(
     token: str, new_password: NewPasswordReset, db: Session = Depends(get_db)
 ):
     try:
-        payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(
+            token, settings.jwt_secret_key, algorithms=[settings.algorithm]
+        )
     except JWTError:
         raise HTTPException(
             status_code=400, detail=f"Token is invalid or has expired"

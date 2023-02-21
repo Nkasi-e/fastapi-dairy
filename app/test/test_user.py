@@ -1,5 +1,5 @@
 from app.users import user_schema
-from app.utils.oauth2 import JWT_SECRET_KEY, ALGORITHM
+from app.config import settings
 from jose import jwt
 import pytest
 
@@ -39,7 +39,9 @@ def test_user_login(client, test_user):
     )
     login_response = user_schema.Token(**res.json())
     payload = jwt.decode(
-        login_response.access_token, JWT_SECRET_KEY, algorithms=[ALGORITHM]
+        login_response.access_token,
+        settings.jwt_secret_key,
+        algorithms=[settings.algorithm],
     )
     id = payload.get("user_id")
     assert id == test_user["id"]

@@ -1,4 +1,3 @@
-import os
 from typing import Optional
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
@@ -7,17 +6,11 @@ from datetime import datetime, timedelta
 from ..db.database import get_db
 from ..users.user_model import User
 from sqlalchemy.orm import Session
-from dotenv import load_dotenv
 from pydantic import BaseModel
-
-load_dotenv(".env")
+from app.config import settings
 
 
 oauth2_schema = OAuth2PasswordBearer(tokenUrl="login")
-
-JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY")
-ALGORITHM = os.environ.get("ALGORITHM")
-ACCESS_TOKEN_EXPIRES_IN = float(os.environ.get("ACCESS_TOKEN_EXPIRES_IN"))
 
 
 class TokenData(BaseModel):
@@ -30,17 +23,23 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     if expires_delta:
         expires = datetime.utcnow() + expires_delta
     else:
-        expires = datetime.utcnow() + timedelta(days=ACCESS_TOKEN_EXPIRES_IN)
+        expires = datetime.utcnow() + timedelta(
+            days=settings.access_token_expires_in
+        )
 
     to_encode.update({"exp": expires})
 
-    encoded_jwt = jwt.encode(to_encode, JWT_SECRET_KEY, algorithm=ALGORITHM)
+    encoded_jwt = jwt.encode(
+        to_encode, settings.jwt_secret_key, algorithm=settings.algorithm
+    )
     return encoded_jwt
 
 
 def verify_access_token(token: str, credentials_exception):
     try:
-        payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(
+            token, settings.jwt_secret_key, algorithms=[settings.algorithm]
+        )
 
         id: str = payload.get("user_id")
         if id is None:
